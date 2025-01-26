@@ -96,7 +96,7 @@ function draw() {
         if (fadeType === "end") {
             fadeToBlack();
         } else if (fadeType === "artefact") {
-            fadeWithCircle();
+            fadeWithCircle(330, 500);
         } else if (fadeType === "start") {
             fadeReverse();
         }
@@ -127,15 +127,26 @@ function fadeReverse() {
 }
 
 // Fonction de fondu en cercle concentrique
-function fadeWithCircle() {
-    if (circleSize < width * 1.5) {
-        circleSize += 20; 
+function fadeWithCircle(posX, posY) {
+    if (circleSize > 0) {
+        circleSize -= 20;  // Réduction progressive de la taille du cercle
     } else {
         fadeCompleted = true;
-        redirectToNextPage();
+        redirectToNextPage();  // Redirection si nécessaire
     }
-    fill(0);
-    ellipse(width / 2, height / 2, circleSize, circleSize);
+
+    // Création d'un masque
+    let mask = createGraphics(width, height);
+    mask.fill(0);  // Fond noir du masque
+    mask.rect(0, 0, width, height);
+
+    // Dessiner le cercle transparent dans le masque
+    mask.erase();  // Active le mode effacement (transparent)
+    mask.ellipse(posX, posY, circleSize, circleSize);
+    mask.noErase();  // Désactive le mode effacement
+
+    // Appliquer le masque à un rectangle noir couvrant l'écran
+    image(mask, 0, 0);
 }
 
 // Vérifie si la souris est à l'intérieur du rectangle
@@ -150,7 +161,7 @@ function mousePressed() {
 
     if (isMouseInsideRectangle()) {
         if (mouseButton === LEFT) {
-            startFade("end");  // Clic gauche : fade noir classique
+            startFade("artefact");  // Clic gauche : fade noir classique
         }
     }
 }
