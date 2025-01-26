@@ -2,9 +2,13 @@ let img;
 let greenslim;
 let roseslim;
 let slimsize = 64;
-let fadeAmount = 0;  // Niveau d'opacité du fade (0 = transparent, 255 = opaque)
-let fading = false;  // Variable pour activer le fade
+let fadeAmount = 255;  // Départ entièrement noir pour le fade "reverse"
+let fading = true;  // Démarrer directement avec le fade
 let fadeCompleted = false; // Variable pour vérifier si le fade est terminé
+let fadeType = "start";  // start, end, artefact
+let circleSize = 0; // Taille initiale du cercle pour le fade en cercle
+
+let ambianceSound;
 
 // Coordonnées et dimensions du rectangle
 let rectX = 298;
@@ -32,6 +36,7 @@ function preload() {
     greenslim = loadImage("greenslim_idle.gif");
     roseslim = loadImage("roseslim_idle.gif");
     customFont = loadFont("FT88-Regular.ttf");
+    ambianceSound = loadSound("hub.mp3");
 }
 
 function setup() {
@@ -50,6 +55,11 @@ function setup() {
     textAlign(CENTER, TOP);
 
     cursor(ARROW); 
+
+    // Jouer le son en boucle
+    ambianceSound.setLoop(true);
+    ambianceSound.play();
+    ambianceSound.setVolume(0.5); // Réglage du volume (0.0 à 1.0)
 }
 
 function draw() {    
@@ -60,8 +70,8 @@ function draw() {
         if (!fading) {
             if (isMouseInsideRectangle()) {
                 isHovering = true;
-                cursor(HAND);  // Change le curseur en main uniquement si pas de fade
-                fill(0);  // Texte en noir
+                cursor(HAND);
+                fill(0);
 
                 let padding = 10;
                 text(message, rectX + padding, rectY + padding, rectWidth - 2 * padding, rectHeight - 2 * padding);
@@ -71,7 +81,6 @@ function draw() {
             }
         }
 
-        // Affichage des slimes
         image(greenslim, 330, 500);
         greenslim.play();
 
@@ -82,29 +91,51 @@ function draw() {
         roseslim.play();
     }
 
-    // Gestion du fade-out
+    // Gestion du fade-out selon le type sélectionné
     if (fading) {
-        fadeToBlack();
+        if (fadeType === "end") {
+            fadeToBlack();
+        } else if (fadeType === "artefact") {
+            fadeWithCircle();
+        } else if (fadeType === "start") {
+            fadeReverse();
+        }
     }
 }
 
-// Fonction pour démarrer le fade-out
-function startFade() {
-    fading = true;
-    cursor(WAIT);  // Change immédiatement le curseur en mode attente (loading)
-}
-
-// Fonction de fondu au noir progressif
+// Fonction de fondu au noir progressif (classique)
 function fadeToBlack() {
     if (fadeAmount < 255) {
-        fadeAmount += 5;  // Incrément progressif de l'opacité
+        fadeAmount += 5;  
     } else {
-        fading = false;
-        fadeCompleted = true;  // Une fois l'écran noir, terminer le fade
-        //noCursor();  // Cacher le curseur une fois le fade terminé
+        fadeCompleted = true;
+        redirectToNextPage();
     }
     fill(0, fadeAmount);
     rect(0, 0, width, height);
+}
+
+// Fonction de fondu inverse (révèle progressivement l'écran)
+function fadeReverse() {
+    if (fadeAmount > 0) {
+        fadeAmount -= 2;
+    } else {
+        fading = false; // Arrêter le fade une fois terminé
+    }
+    fill(0, fadeAmount);
+    rect(0, 0, width, height);
+}
+
+// Fonction de fondu en cercle concentrique
+function fadeWithCircle() {
+    if (circleSize < width * 1.5) {
+        circleSize += 20; 
+    } else {
+        fadeCompleted = true;
+        redirectToNextPage();
+    }
+    fill(0);
+    ellipse(width / 2, height / 2, circleSize, circleSize);
 }
 
 // Vérifie si la souris est à l'intérieur du rectangle
@@ -115,14 +146,26 @@ function isMouseInsideRectangle() {
 
 // Désactiver les clics souris après le fade
 function mousePressed() {
-    if (fadeCompleted) return; // Empêche de cliquer si le fade est terminé
+    if (fadeCompleted) return; 
 
     if (isMouseInsideRectangle()) {
-        onRectangleClick();
+        if (mouseButton === LEFT) {
+            startFade("end");  // Clic gauche : fade noir classique
+        }
     }
 }
 
-// Fonction déclenchée lorsqu'on clique dans le rectangle
-function onRectangleClick() {    
-    startFade();  // Déclencher le fondu au noir
+// Fonction de redirection après le fade
+function redirectToNextPage() {
+    setTimeout(() => {
+        window.location.href = "/end/index.html";
+    }, 500);
+}
+
+// Fonction pour démarrer un fade selon le type choisi
+function startFade(type) {
+    fading = true;
+    fadeType = type;
+    fadeAmount = type === "start" ? 255 : 0;  // Commencer le fade inverse à 255
+    cursor(WAIT);  
 }
