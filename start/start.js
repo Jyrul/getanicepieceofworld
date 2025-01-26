@@ -22,7 +22,7 @@ function setup() {
     // Jouer le son en boucle
     ambianceSound.setLoop(true);
     ambianceSound.play();
-    ambianceSound.setVolume(0.5);
+    ambianceSound.setVolume(0.1);
 }
 
 function draw() {    

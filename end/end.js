@@ -43,8 +43,6 @@ function preload() {
     img = loadImage("temple.png");
     greenslim = loadImage("greenslim_idle.gif");
     roseslim = loadImage("roseslim_idle.gif");
-    //artefactAir = loadImage("Artefact-air.png");
-    //artefactTerre = loadImage("Artefact-terre.png");
     artefactAir = loadImage("Artefact-air.gif");
     artefactTerre = loadImage("Artefact-terre.gif");
     customFont = loadFont("FT88-Regular.ttf");
@@ -75,7 +73,7 @@ function setup() {
     // Jouer le son en boucle
     ambianceSound.setLoop(true);
     ambianceSound.play();
-    ambianceSound.setVolume(0.4);
+    ambianceSound.setVolume(0.3);
 
     circleSize = max(width, height) * 1.5;
 }
@@ -93,15 +91,12 @@ function draw() {
         pop();  
         roseslim.play();
 
-        /*image(artefactAir, artefactAirX, artefactAirY);
-        image(artefactTerre, artefactTerreX, artefactTerreY);*/
         image(artefactAir, artefactAirX, artefactAirY);
         artefactAir.play();
 
         image(artefactTerre, artefactTerreX, artefactTerreY);
         artefactTerre.play();
 
-        // Afficher le bouton retour
         image(backbutton, backbuttonX, backbuttonY);
     }
 
@@ -188,9 +183,7 @@ function fadeWithCircle(posX, posY) {
 
 // Fonction de redirection après le fade
 function redirectToNextPage() {
-    //setTimeout(() => {
-        window.location.href = "/start/index.html";
-    //}, 500);
+    window.location.href = "/start/index.html";
 }
 
 // Fonction pour démarrer un fade selon le type choisi

@@ -59,7 +59,7 @@ function setup() {
     // Jouer le son en boucle
     ambianceSound.setLoop(true);
     ambianceSound.play();
-    ambianceSound.setVolume(0.2); // Réglage du volume (0.0 à 1.0)
+    ambianceSound.setVolume(0.1); // Réglage du volume (0.0 à 1.0)
 }
 
 function draw() {    
