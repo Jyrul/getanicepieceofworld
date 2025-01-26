@@ -91,7 +91,7 @@ function preload() {
     background = loadImage("background.png");
     
     //Music
-    music = loadSound("/forestworld/forest.mp3");
+    music = loadSound("forest.mp3");
 }
 
 function setup() {
@@ -124,10 +124,11 @@ function setup() {
     // Jouer le son en boucle
     music.setLoop(true);
     music.setVolume(0.2); // Réglage du volume (0.0 à 1.0)
+    music.play();
 }
 
 function draw() {    
-    music.play();
+    
     //Background
     fill(200);
     rect(0, 0, width - 50, height);
