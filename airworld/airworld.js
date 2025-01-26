@@ -84,13 +84,12 @@ function preload() {
   ventGif = loadImage("vent.gif");
   ambianceSound = loadSound("air.mp3");
 }
+function setup() {  
 
-// Jouer le son en boucle
-ambianceSound.setLoop(true);
-ambianceSound.play();
-ambianceSound.setVolume(1); // Réglage du volume (0.0 à 1.0)
-
-function setup() {
+  // Jouer le son en boucle
+  ambianceSound.setLoop(true);
+  ambianceSound.play();
+  ambianceSound.setVolume(0.2); // Réglage du volume (0.0 à 1.0)
 
   createCanvas(800, 600);
   redRectangles = [    
