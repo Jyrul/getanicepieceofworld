@@ -1,29 +1,28 @@
 let img;
-let greenslim;
-let greenslimX = 330;
-let greenslimY = 500;
-let roseslimX = -467;
-let roseslimY = 500;
-let roseslim;
+let greenslim, roseslim;
+let greenslimX = 330, greenslimY = 500;
+let roseslimX = -467, roseslimY = 500;
 let slimsize = 64;
-let artefactAirX = 168;
-let artefactAirY = 377;
-let artefactTerreX = 565;
-let artefactTerreY = 377;
+let artefactAir, artefactTerre;
+let artefactAirX = 168, artefactAirY = 365;
+let artefactTerreX = 565, artefactTerreY = 365;
 let fadeAmount = 255;  // Départ entièrement noir pour le fade "reverse"
 let fading = true;  // Démarrer directement avec le fade
 let fadeCompleted = false; // Variable pour vérifier si le fade est terminé
 let fadeType = "start";  // start, end, artefact
 let circleSize = 0; // Taille initiale du cercle pour le fade en cercle
+let backbutton;
 
 let ambianceSound;
 
+// Position du bouton retour
+let backbuttonX = 730;
+let backbuttonY = 530;
+let backbuttonSize = 64;
+
 // Coordonnées et dimensions du rectangle
-let rectX = 298;
-let rectY = 238;
-let rectWidth = 201;
-let rectHeight = 216;
-let isHovering = false; // Variable pour suivre l'état de la souris
+let rectX = 298, rectY = 238;
+let rectWidth = 201, rectHeight = 216;
 
 // Texte à afficher
 let message = `L’apport du nouveau.
@@ -44,17 +43,19 @@ function preload() {
     img = loadImage("temple.png");
     greenslim = loadImage("greenslim_idle.gif");
     roseslim = loadImage("roseslim_idle.gif");
-    artefactAir = loadImage("Artefact-air.png");
-    artefactTerre = loadImage("Artefact-terre.png");
+    //artefactAir = loadImage("Artefact-air.png");
+    //artefactTerre = loadImage("Artefact-terre.png");
+    artefactAir = loadImage("Artefact-air.gif");
+    artefactTerre = loadImage("Artefact-terre.gif");
     customFont = loadFont("FT88-Regular.ttf");
     ambianceSound = loadSound("hub.mp3");
+    backbutton = loadImage("backbutton.gif");
 }
 
 function setup() {
     createCanvas(800, 600);
     
     img.resize(800, 600);
-
     greenslim.resize(slimsize, slimsize);
     greenslim.pause();
 
@@ -63,6 +64,7 @@ function setup() {
 
     artefactAir.resize(slimsize, slimsize);
     artefactTerre.resize(slimsize, slimsize);
+    backbutton.resize(backbuttonSize, backbuttonSize);
 
     textFont(customFont);
     textSize(10);
@@ -73,9 +75,9 @@ function setup() {
     // Jouer le son en boucle
     ambianceSound.setLoop(true);
     ambianceSound.play();
-    ambianceSound.setVolume(0.5); // Réglage du volume (0.0 à 1.0)
+    ambianceSound.setVolume(0.5);
 
-    circleSize = max(width, height) * 1.5;    
+    circleSize = max(width, height) * 1.5;
 }
 
 function draw() {    
@@ -91,8 +93,16 @@ function draw() {
         pop();  
         roseslim.play();
 
+        /*image(artefactAir, artefactAirX, artefactAirY);
+        image(artefactTerre, artefactTerreX, artefactTerreY);*/
         image(artefactAir, artefactAirX, artefactAirY);
+        artefactAir.play();
+
         image(artefactTerre, artefactTerreX, artefactTerreY);
+        artefactTerre.play();
+
+        // Afficher le bouton retour
+        image(backbutton, backbuttonX, backbuttonY);
     }
 
     // Gestion du fade-out selon le type sélectionné
@@ -100,7 +110,7 @@ function draw() {
         if (fadeType === "end") {
             fadeToBlack();
         } else if (fadeType === "artefact") {
-            fadeWithCircle(greenslimX+32, greenslimY+32);
+            fadeWithCircle(backbuttonX + backbuttonSize / 2, backbuttonY + backbuttonSize / 2);
         } else if (fadeType === "start") {
             fadeReverse();
         }
@@ -112,6 +122,26 @@ function draw() {
     let padding = 10;
     text(message, rectX + padding, rectY + padding, rectWidth - 2 * padding, rectHeight - 2 * padding);
 
+    // Vérifier si la souris est sur le bouton retour
+    if (isMouseInsideBackbutton()) {
+        cursor(HAND);
+    } else {
+        cursor(ARROW);
+    }
+}
+
+
+// Vérifie si la souris est à l'intérieur du bouton retour
+function isMouseInsideBackbutton() {
+    return mouseX > backbuttonX && mouseX < backbuttonX + backbuttonSize &&
+           mouseY > backbuttonY && mouseY < backbuttonY + backbuttonSize;
+}
+
+// Fonction déclenchée lors d'un clic de souris
+function mousePressed() {
+    if (isMouseInsideBackbutton()) {
+        startFade("artefact");
+    }
 }
 
 // Fonction de fondu au noir progressif (classique)
@@ -131,46 +161,35 @@ function fadeReverse() {
     if (fadeAmount > 0) {
         fadeAmount -= 2;
     } else {
-        fading = false; // Arrêter le fade une fois terminé
+        fading = false;
     }
     fill(0, fadeAmount);
     rect(0, 0, width, height);
 }
 
-
 function fadeWithCircle(posX, posY) {
     if (circleSize > 0) {
-        circleSize -= 20;  // Réduction progressive de la taille du cercle
+        circleSize -= 20;
     } else {
         fadeCompleted = true;
-        //redirectToNextPage();  // Redirection si nécessaire
+        redirectToNextPage();
     }
 
-    // Création d'un masque
     let mask = createGraphics(width, height);
-    mask.fill(0);  // Fond noir du masque
+    mask.fill(0);
     mask.rect(0, 0, width, height);
 
-    // Dessiner le cercle transparent dans le masque
-    mask.erase();  // Active le mode effacement (transparent)
+    mask.erase();  
     mask.ellipse(posX, posY, circleSize, circleSize);
-    mask.noErase();  // Désactive le mode effacement
+    mask.noErase();
 
-    // Appliquer le masque à un rectangle noir couvrant l'écran
     image(mask, 0, 0);
-}
-
-
-// Vérifie si la souris est à l'intérieur du rectangle
-function isMouseInsideRectangle() {
-    return mouseX > rectX && mouseX < rectX + rectWidth &&
-           mouseY > rectY && mouseY < rectY + rectHeight;
 }
 
 // Fonction de redirection après le fade
 function redirectToNextPage() {
     setTimeout(() => {
-        window.location.href = "/end/index.html";
+        window.location.href = "/hub/index.html";
     }, 500);
 }
 
@@ -178,6 +197,6 @@ function redirectToNextPage() {
 function startFade(type) {
     fading = true;
     fadeType = type;
-    fadeAmount = type === "start" ? 255 : 0;  // Commencer le fade inverse à 255
+    fadeAmount = type === "start" ? 255 : 0;  
     cursor(WAIT);  
 }
