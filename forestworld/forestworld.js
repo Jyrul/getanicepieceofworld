@@ -43,6 +43,9 @@ let apple = [
     [400, 200, true, 64, "corpschien"],
 ]; //x, y, appear, size, name
 
+//Music
+let music;
+
 //Scene
 let leftBorder = false;
 let rightBorder = false;
@@ -71,8 +74,7 @@ let score = 0;
 let chrono = 0;
 
 function preload() {
-    background = loadImage("background.png");
-
+    //Animation
     greenSlimIdle = loadImage("vert_enclum_idle.gif");
     greenSlimRun = loadImage("vert_enclum_mouv.gif");
     roseSlimIdle = loadImage("rose_bulle_idle.gif");
@@ -80,10 +82,16 @@ function preload() {
     assembleTotem = loadImage("assemble_totem.gif");
     artefact = loadImage("artefact_terre.gif");
 
+    //Image
     teteOiseau = loadImage("tete_doiseau.png");
     corpsOiseau = loadImage("corps_doiseau.png");
     teteChien = loadImage("tete_chien.png");
     corpsChien = loadImage("corps_chien.png");
+
+    background = loadImage("background.png");
+    
+    //Music
+    music = loadSound("/forestworld/forest.mp3");
 }
 
 function setup() {
@@ -112,6 +120,11 @@ function setup() {
     corpsOiseau.resize(60, 60);
     teteChien.resize(60, 60);
     corpsChien.resize(60, 60);
+
+    // Jouer le son en boucle
+    music.setLoop(true);
+    music.play();
+    music.setVolume(0.2); // Réglage du volume (0.0 à 1.0)
 }
 
 function draw() {
