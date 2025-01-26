@@ -48,7 +48,7 @@ function preload() {
     artefactAir = loadImage("Artefact-air.gif");
     artefactTerre = loadImage("Artefact-terre.gif");
     customFont = loadFont("FT88-Regular.ttf");
-    ambianceSound = loadSound("hub.mp3");
+    ambianceSound = loadSound("end.mp3");
     backbutton = loadImage("backbutton.gif");
 }
 
