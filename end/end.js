@@ -75,7 +75,7 @@ function setup() {
     // Jouer le son en boucle
     ambianceSound.setLoop(true);
     ambianceSound.play();
-    ambianceSound.setVolume(0.5);
+    ambianceSound.setVolume(0.4);
 
     circleSize = max(width, height) * 1.5;
 }
@@ -188,9 +188,9 @@ function fadeWithCircle(posX, posY) {
 
 // Fonction de redirection après le fade
 function redirectToNextPage() {
-    setTimeout(() => {
-        window.location.href = "/hub/index.html";
-    }, 500);
+    //setTimeout(() => {
+        window.location.href = "/start/index.html";
+    //}, 500);
 }
 
 // Fonction pour démarrer un fade selon le type choisi
