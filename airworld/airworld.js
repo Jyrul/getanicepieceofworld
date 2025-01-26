@@ -39,7 +39,7 @@ const rectWidth = 400;
 
 const rectHeight = 200;
 
-
+checkCollisionWithArtefacts();
 
 let currentHorizontalKey = null;
 
@@ -63,13 +63,17 @@ const damping = 0.99; // Atténuation du mouvement (frottements)
 
 const swingStrength = 0.02; // Force de balancement 
 
-
+let ambianceSound;
 
 const returnForce = 0.05; // Force de retour progressive
 
 let collected = false; // Indique si le carré jaune a été récupéré
 let artefactGif;
 let ventGif;
+
+let transitionRadius = 0; // Rayon du cercle pour la transition
+let transitioning = true; // Indique si la transition est en cours
+
 
 function preload() {
 
@@ -78,9 +82,13 @@ function preload() {
   slimeRose = loadImage("slime_rose.png");
   artefactGif = loadImage("Artefact-air-anime.gif");
   ventGif = loadImage("vent.gif");
+  ambianceSound = loadSound("air.mp3");
 }
 
-
+// Jouer le son en boucle
+ambianceSound.setLoop(true);
+ambianceSound.play();
+ambianceSound.setVolume(1); // Réglage du volume (0.0 à 1.0)
 
 function setup() {
 
@@ -115,7 +123,7 @@ function setup() {
 let spawnPoints = [
   { x: 50, y: 1525 }, // Point 1
   { x: 925, y: 200 }, // Point 2
-  { x: 750, y: 1300 }, // Point 3
+  { x: 850, y: 1300 }, // Point 3
   { x: 1475, y: 1500 }, // Point 4
 ];
 // Sélectionne un seul point de spawn aléatoire
@@ -141,6 +149,9 @@ function draw() {
 
   handleSquareMovement();
   checkCollisions();
+  
+  // Vérifier si le carré rose touche un carré jaune
+  checkCollisionWithYellowSquares();
 
   squareX = constrain(squareX + velocityX, 0, worldSize - squareSize);
   squareY = constrain(squareY + velocityY, 0, worldSize - squareSize);
@@ -150,6 +161,7 @@ function draw() {
 
   for (let square of yellowSquares) {
     image(artefactGif, square.x, square.y, 30, 30); // Affiche le GIF
+    
   }
 
   checkCollisionsWithOvals(); // Vérifie et applique le rebond avec les ovales bleus
@@ -167,7 +179,7 @@ function drawRopeAndPinkSquare() {
 
   // Dessiner l'image du slime rose
   image(slimeRose, pinkX, pinkY+5, squareSize, squareSize);
-
+  console.log(`Distance: ${dist(pinkX, pinkY, square.x, square.y)}`);
 }
 
 
@@ -498,6 +510,7 @@ function drawBlueOvals() {
 function drawYellowSquares() {
   fill(255, 255, 0); // Couleur jaune
   noStroke();
+  console.log(`Distance: ${dist(pinkX, pinkY, square.x, square.y)}`);
   for (let i = yellowSquares.length - 1; i >= 0; i--) {
     let square = yellowSquares[i];
 
@@ -572,4 +585,35 @@ function redirectToNextPage() {
   setTimeout(() => {
       window.location.href = "/end/index.html";
   }, 500);
+}
+
+function checkCollisionWithArtefacts() {
+  for (let i = 0; i < yellowSquares.length; i++) {
+    let square = yellowSquares[i];
+
+    // Vérifier la distance entre le carré rose et l'artefact
+    let distance = dist(pinkX, pinkY, square.x, square.y);
+
+    // Si la distance est inférieure à un seuil (par exemple, 20 pixels), considérer qu'il y a collision
+    if (distance < squareSize / 2) {
+      collected = true; // Marquer l'artefact comme récupéré
+      yellowSquares.splice(i, 1); // Retirer l'artefact du tableau
+      break;
+    }
+  }
+}
+
+function checkCollisionWithYellowSquares() {
+  for (let i = yellowSquares.length - 1; i >= 0; i--) {
+    let yellow = yellowSquares[i];
+    let dx = pinkX - yellow.x;
+    let dy = pinkY - yellow.y;
+    let distance = sqrt(dx * dx + dy * dy);
+
+    if (distance < squareSize) { // Vérifie si le centre du carré rose est proche du carré jaune
+      collected = true; // Met la variable à true
+      yellowSquares.splice(i, 1); // Retire le carré jaune du tableau
+      break;
+    }
+  }
 }
