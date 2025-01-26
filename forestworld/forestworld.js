@@ -37,9 +37,9 @@ let actor = {
 };
 
 let apple = [
-    [500, 440, true, 64, "teteoiseau"],
-    [1200, 200, true, 64, "corpsoiseau"],
-    [600, 300, true, 64, "tetechien"],
+    [1090, 220, true, 64, "teteoiseau"],
+    [1260, 340, true, 64, "corpsoiseau"],
+    [670, 220, true, 64, "tetechien"],
     [400, 200, true, 64, "corpschien"],
 ]; //x, y, appear, size, name
 
@@ -67,7 +67,7 @@ let teteChien;
 let corpsChien;
 
 //Integer
-let score = 4;
+let score = 0;
 let chrono = 0;
 
 function preload() {
@@ -108,10 +108,10 @@ function setup() {
     roseSlimIdle.pause();
 
     //Totem
-    teteOiseau.resize(20, 20);
-    corpsOiseau.resize(20, 20);
-    teteChien.resize(20, 20);
-    corpsChien.resize(20, 20);
+    teteOiseau.resize(60, 60);
+    corpsOiseau.resize(60, 60);
+    teteChien.resize(60, 60);
+    corpsChien.resize(60, 60);
 }
 
 function draw() {
