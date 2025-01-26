@@ -59,7 +59,7 @@ function setup() {
     // Jouer le son en boucle
     ambianceSound.setLoop(true);
     ambianceSound.play();
-    ambianceSound.setVolume(0.5); // Réglage du volume (0.0 à 1.0)
+    ambianceSound.setVolume(0.2); // Réglage du volume (0.0 à 1.0)
 }
 
 function draw() {    
@@ -168,9 +168,7 @@ function mousePressed() {
 
 // Fonction de redirection après le fade
 function redirectToNextPage() {
-    setTimeout(() => {
-        window.location.href = "/end/index.html";
-    }, 500);
+        window.location.href = "/forestworld/index.html";
 }
 
 // Fonction pour démarrer un fade selon le type choisi
